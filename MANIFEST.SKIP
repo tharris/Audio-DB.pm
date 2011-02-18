@@ -1,0 +1,14 @@
+debris/
+html/
+eg/
+Makefile.PL.sophisticated
+Makefile.old
+CVS/
+MANIFEST.SKIP
+MANIFEST.bak
+releases/
+Makefile$
+.cvsignore
+install_util/
+.DS_Store
+tmp/

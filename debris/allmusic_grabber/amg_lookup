@@ -1,0 +1,136 @@
+#!/usr/bin/perl
+
+# Provided with a list of artists or albums, 
+# this script will attempt to fetch the appropriate
+# information from allmusic.com
+
+# Need to add in code for 
+# saving artist and album cover images...
+# following the "read more" link if it exists...
+
+use LWP::Simple;
+use HTML::Parser;
+use strict;
+
+use constant BASE_URL => 'http://allmusic.com/cg/x.dll?p=amg&optl=1&sql=1';
+#use constant BASE_URL => 'http://allmusic.com/cg/amg.dll?p=amg&uid=CASS70306221052&sql=';
+use constant CONT_URL => 'http://allmusic.com/cg/amg.dll?p=amg&sql=';
+
+my ($file,$class) = @ARGV;
+($file && $class) or die "Please provide a file of artists and albums and the class to search\n";
+chomp $file;
+chomp $class;
+
+
+my $terms = parse_file();
+
+my $count;
+foreach my $term (keys %$terms) {
+  $count++;
+  
+  # Encode the term for searching: UC, replace \s with |, remove ' and ,
+  my $term_encoded = uc $term;
+  $term_encoded =~ s/\s/|/g;
+  $term_encoded =~ s/[,\'\-]//g;
+  
+  # Fetch the page...
+  my $full_url = BASE_URL . $term_encoded;
+  my $response = get($full_url);	
+  
+  while ($response =~ /We\shave\stoo\smany\susers\sright\snow/i) {
+    $response = "";
+    # There really should be a timeout here
+    $response = get($full_url);
+  }
+  
+  #  Check the type of response
+  #  Was it just an indeterminate response
+  if ($response =~ /with\snames\slike/i) {
+    $terms->{$term}->{response} = 'indeterminate';
+    next;
+    
+    # ADD THIS FUNCTIONALITY IN LATER...
+    # extract and save the links for later perusal
+    # THEN I CAN JUST LOOK THROUGH THE LIST AND SELECT THE LINKS I WANT TO GRAB
+  } elsif ($response =~ /Sorry,\sno\smatches\sfound/i) {
+    $terms->{$term}->{response} = 'not_found';
+    next;
+  } else {
+    #  we got a main hit
+    $terms->{$term}->{response} = 'found';
+  }
+  
+  # Does this continue on a second page?
+  # Formulate the URL and fetch that page...
+  if ($response =~ /\javascript\:z\(\'(.{15})\'\)\"\>\<img\ssrc\=\/i\/continue2\.jpg\salt\=\"click\shere\sfor\smore/) {
+    my $full_page = $1;
+    
+    # After expanding the artist, may also need to expand "Appears on" and "Songs Appear on" sections    
+    # Oh well...
+
+    my $cont_url = CONT_URL . $full_url;
+    $response = get($cont_url);
+  }
+  
+  # Replace the stylesheet link
+#  $response =~ s/\<link\srel\=\"stylesheet\"\shref\=\"\/com\/amg\/music\.css\"\smedia\=\"screen\"\stype\=\"text\/css\"\>/
+#    \<link rel\=\"stylesheet\" href\=\"amg\.css\" media\=\"screen\" type\=\"text\/css\"\>/;
+
+  #    # Parse the HTML...
+  #    my $parsed = [];
+  #    $parser = HTML::Parser->new(text_h => [sub {push (@$parsed,shift)},
+  #					   'dtext'],                    
+  #			       )->parse($response);
+  #    
+  #    # reset the combined scalar and classes...
+  #    my ($combined,$genres,$styles,$tones);
+  #    
+  #    foreach (@$parsed) {
+  #      $combined = $combined . $_;
+  #    }
+  
+  #    # Is the 'tones' field evaluated? if so, grab em.
+  #    if ($combined =~ /tones/i) {
+  #      $combined =~ /genres(.*?)styles(.*?)tones(.*?)labels/i;
+  #      ($genres,$styles,$tones) = ($1,$2,$3);
+  #    } else {
+  #      $combined =~ /genres(.*?)styles(.*?)labels/i;
+  #      ($genres,$styles) = ($1,$2);
+  #    }
+  
+  #open the output file
+  open (OUTPUT,">$term_encoded.html");
+  print OUTPUT $response;
+  
+  #    open (GENRES,">>script_output/genres.txt");
+  #    print GENRES "Artist: $artist\nGenres: $genres\nStyles: $styles\nTones: $tones\n\n";  
+}
+
+
+# iterate over all terms again to find those
+# that had no hits or indeterminate hits...
+my %stats;
+foreach (keys %$terms) {
+  $stats{$terms->{$_}->{response}}++;
+  next if ($terms->{$_}->{response} eq 'found');
+  print STDERR $_,"\t",$terms->{$_}->{response},"\n";
+
+}
+
+print STDERR "Total terms examined : ", scalar keys %$terms,"\n";
+print STDERR "     Total found     : ",$stats{found},"\n";
+print STDERR "     Multiple hits   : ",$stats{indeterminate},"\n";
+print STDERR "     Not Found       : ",$stats{not_found},"\n";
+
+
+
+sub parse_file {
+  # 1  Read a list of artists
+  my $fields = {};
+  open (IN,$file) || die "Couldn't open the file: $file. $!\n";
+  while (<IN>) {
+    chomp;
+    $fields->{$_} = {};
+  }
+  return $fields;
+}

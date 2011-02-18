@@ -1,0 +1,219 @@
+
+##################################
+# The following subroutines      #
+# were borrowed from Apache::MP3 #
+# and modified to run outside of #
+# modperl.                       #
+##################################
+
+
+## This is for using Lincoln's methods from Apache::MP3
+## Which have more robust error and file type checking
+## CURRENTLY NOT IMPLEMENTED, ALTHOUGH INFRASTRUCTURE EXISTS
+
+#sub process_songs {
+#  my $self = shift;
+#  # Fetch all mp3s stored underneath the base dir
+#  my $mp3_info = $self->find_mp3s(1);
+#  # $mp3_info is a hashref. Keys are urls to songs,
+#  # Values are hashrefs containing tag-value pairs of all 
+#  # mp3info retrieved from the tag.
+  
+#  foreach my $song (keys %{$mp3_info}) {
+#    # Construct the full path so that I can fetch specific information
+#    # about the file (ie filesize)
+#    my $file = $song;
+#    my $tags = %{$song};
+    
+#    # The cache song method needs to be substantially reworked...
+#    # I don't need to fetch the info tags from it anymore...
+    
+#    # Check to see if we have seen this artist, genre, or album before
+#    my $artist_id = _check_artist($tags->{artist});
+#    my $genre_id  = _check_genres($tags->{genre});
+#    my $album_id  = _check_album($tags,$artist_id);
+    
+#    # Store all the salient information
+#    _stuff_song($tags,$album_id,$artist_id,$genre_id,$file,$full_path);
+#    return;
+#  }
+#}
+
+
+
+
+
+# this searches the current directory for MP3 files and subdirectories
+#sub find_mp3s {
+#  my $self = shift;
+#  my $recurse = shift;
+#  my $dir = dirname($self->filename);
+  
+#  my @uris = $self->sort_mp3s($self->_find_mp3s($dir,$recurse));
+#  foreach (@uris) {
+#    # strip directory part
+#    substr($_,0,length($dir)+1) = '' if index($_,$dir) == 0;
+#    # turn into a URL
+#    $_ = "$uri/$_";
+#  }
+#  return \@uris;
+#}
+
+## sort MP3s
+#sub sort_mp3s {
+#  my $self = shift;
+#  my $files = shift;
+#  return sort keys %$files;
+#}
+
+## recursive find
+#sub _find_mp3s {
+#  my $self = shift;
+#  my ($d,$recurse) = @_;
+#  my ($directories,$files) = $self->read_directory($d);
+#  # Add the directory back onto each file
+#  unless ($d eq '.') {
+#    foreach my $k (keys %$files) {
+#      $files->{"$d/$k"} = $files->{$k};
+#      delete $files->{$k};
+#    }
+#  }
+
+#  if ($recurse) {
+#    foreach (@$directories) {
+#      my $f = $self->_find_mp3s("$d/$_",$recurse);
+#      # Add the new files to our main hash
+#      $files->{$_} = $f->{$_} foreach keys %$f;
+#    }
+#  }
+
+#  return $files;
+#}
+
+
+## read a single directory, returning lists of subdirectories and MP3 files
+#sub read_directory {
+#  my $self      = shift;
+#  my $dir       = shift;
+
+#  my (@directories,%seen,%mp3s,@playlists);
+  
+#  opendir D,$dir or return;
+#  while (defined(my $d = readdir(D))) {
+#    next if $self->skip_directory($d);
+
+#    # skip if file is unreadable
+#    next unless -r "$dir/$d";
+
+#    # Here, Lincoln is using mod_perl to 
+#    # check and see if the current file is a directory....
+#    # my $mime = $self->r->lookup_file("$dir/$d")->content_type;
+#    # push(@directories,$d) if !$seen{$d}++ && $mime eq DIR_MAGIC_TYPE;
+
+#    push(@directories,$d) if !$seen{$d}++ && (-d "$dir/$d");
+
+#    my ($mime,@encoding) = guess_media_type("$dir/$d");
+
+#    next unless $supported_types{$mime};
+#    next unless $mp3s{$d} = $self->fetch_info("$dir/$d",$mime);
+#  }
+#  closedir D;
+#  return \(@directories,%mp3s,@playlists);
+#}
+
+#  # patterns to skip
+#  sub skip_directory {
+#    my $self = shift;
+#    my $dir = shift;
+#    return 1 if $dir =~ /^\./;
+#    return 1 if $dir eq 'CVS';
+#    return 1 if $dir eq 'RCS';
+#    return 1 if $dir eq 'SCCS';
+#    undef;
+#  }
+
+#  # return title, artist, duration, and kbps
+#  sub fetch_info {
+#    my $self = shift;
+#    my ($file,$type) = @_;
+#    return unless $supported_types{$type};
+
+#    if (!$self->read_mp3_info) {  # don't read config info
+#      my $f = basename($file,@suffix);
+#      return {
+#	      filename    => $f,
+#	      description => $f,
+#	     };
+#    }
+
+#    my %data = $self->read_cache($file);
+
+#    # Read the file information...
+#    my $info = get_mp3info($full_path) || warn "Couldn't get info";
+
+#    unless (%data and keys(%data) == keys(%FORMAT_FIELDS)) {
+#      my $handler = $supported_types{$type};
+#      $self->$handler($file,\%data);
+#      # fill in missing fields
+#      $data{filename} ||= basename($file);
+#      $data{title}    ||= basename($file,@suffix);
+#      $self->write_cache($file => \%data);
+#    }
+
+#    if (my $blank = $self->missing_comment) {
+#      foreach (qw(artist duration genre album track)) {
+#	$data{$_} ||= $blank;
+#      }
+#    }
+
+#    $data{description} = $self->description(\%data);
+#    return \%data;
+#  }
+
+#  # these methods are called to read the MIME types specified in %supported_types
+#  sub read_mpeg {
+#    my $self = shift;
+#    my ($file,$data) = @_;
+
+#    return unless my $info = get_mp3info($file);
+
+#    my $tag  = get_mp3tag($file);
+#    my ($title,$artist,$album,$year,$comment,$genre,$track) = 
+#      @{$tag}{qw(TITLE ARTIST ALBUM YEAR COMMENT GENRE TRACKNUM)} if $tag;
+#    my $duration = sprintf "%d:%2.2d", $info->{MM}, $info->{SS};
+#    my $seconds  = ($info->{MM} * 60) + $info->{SS};
+
+#    my $dir = dirname ($file);
+#    if (basename ($file) =~ /^track-([0-9]+).mp3$/ && open INDEX, "<$dir/INDEX") {
+#      my $track_num = $1;
+#      while (my $line = <INDEX>) {
+#	if ($line =~ /^DTITLE=(.+)$/) {
+#	  ($artist, $album) = split /\//, $1;
+#	}
+#	if ($line =~ /^TTITLE([0-9]+)=(.+)$/ && $track_num == $1+1) {
+#	  $title = $2;
+#	}
+#      }
+#      close INDEX;
+#    }
+
+#    %$data =(
+#	     title        => $title || '',
+#	     artist       => $artist || ''   ,
+#	     duration     => $duration || '' ,
+#	     genre        => $genre || ''    ,
+#	     album        => $album || ''    ,
+#	     comment      => $comment || '',
+#	     year         => $year || '',
+#	     min          => $info->{MM},
+#	     sec          => $info->{SS},
+#	     seconds      => $seconds,
+#	     track        => $track || '',
+#	     bitrate      => $info->{BITRATE},
+#	     samplerate   => $info->{FREQUENCY},
+#	    );
+#  }
+
+###########
+## End subroutines lifted from Apache::MP3
+###########

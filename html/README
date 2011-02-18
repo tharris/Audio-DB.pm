@@ -1,0 +1,13 @@
+This directory contains a rudimentary CGI
+and supporting files for a web-based interface
+to Audio::DB.
+
+It isn't guaranteed to work at this point as 
+Audio::DB has been through several namespaces and API
+revisions since I touched this.
+
+If you'd like to polish this up, please let me
+know!
+
+Todd Harris
+harris@cshl.edu

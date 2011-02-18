@@ -1,0 +1,313 @@
+body  {
+	margin:0;
+	padding:0;
+	color:#333333;
+	background-color:white;
+	font:11px verdana, arial, helvetica, sans-serif;
+	line-height:19px;
+}
+
+
+
+A       { text-decoration:none; 
+/*	border-bottom:1px dashed #CCC;  */
+	}
+A:link    { color:#336699; }
+A:visited { color:#336699; }
+A:active  { color:silver;  }
+A:hover   { color:blue;    }
+
+
+/*  DEBUGGING BOXES  */
+.debug {
+   width:30%;	 
+   background-color:pink;
+   border:1px solid grey;
+   padding:5px;
+}
+
+.class {
+   font-weight:bold;
+}
+
+
+.shadeone {
+     background-color:#CCFFFF;
+     padding:5px;
+/*     border:1px dotted #CCC; */
+}
+
+
+.shadetwo {
+     background-color:#FFCFFF;
+/*     border:1px dotted #CCC;  */
+}
+
+
+
+.album_table {
+	text-align:left;
+	margin-left:10px;
+	margin-right:10px;
+}
+
+
+
+
+/*  GENERAL FORMATTING  */
+#banner {
+	padding:  15px 10% 35px 125px;
+	margin-bottom: 25px;
+	background-color: #9EAF8F;
+	border-bottom:1px solid #330066;
+        background-image: url("http://127.0.0.1:8081/music/images/stammikans2.jpg");
+/*	background-image: url("http://127.0.0.1:8081/music/images/stammikans.jpg");  */
+/*	background-image: url("http://127.0.0.1:8081/music/images/grand.jpg");       */
+/*	background-image: url("http://127.0.0.1:8081/music/images/ripple.jpg");      */
+	background-position:bottom left;
+	background-repeat:no-repeat;
+	}
+.biglink {
+	line-height:28px;
+	font-size:26px;
+	font-weight:bold;
+	font-family:verdana, arial, helvetica, sans-serif;
+	letter-spacing:4px;
+	}
+
+.biglink a:link, .biglink a:visited {
+	color: #330066;
+	}
+
+#tagline span.left {
+	float: left;
+	text-align: left;
+	width: 49%;
+	}
+
+.nav {
+	font: 11px verdana, arial, helvetica, sans-serif;
+	color: #111111;
+	}
+
+.nav a, .nav a:link, .nav a:visited {
+	color: #330066;
+	}
+
+.nav a:hover {
+	color: blue;
+	}
+
+#tagline span.right {
+	margin-top:-25px;
+	float: right;
+	text-align: right;
+	width: 49%;
+	}
+
+
+
+
+
+/*  TWO COLUMN FORMATTING  */
+#wrapper  {
+	float:left;
+	width:25%;
+	border-right: 1px dotted #330066;
+	color:#111111;
+	background-color: white;
+	margin:5px 25px 0 0;
+	}
+
+#content  {
+	padding:0 0% 0px 0px;
+	margin-right:15px;
+}
+
+
+#sidebar  {
+	font:11px verdana, arial, helvetica, sans-serif;
+	line-height:16px;
+    	padding:0px 60px 0px 15px;
+ 	color:#333333;
+    	background-color: white;
+    	min-width:150px;
+	}
+#sidebar h4 {
+	color: #333333;	
+	font: 11px verdana, arial, helvetica, sans-serif;
+	font-weight: bold;
+	text-transform:capitalize;
+	margin-bottom:1px;
+	margin-top:2px;
+	}
+.bigbottommargin {
+	margin-bottom: 20px;
+	}
+
+
+
+
+
+
+
+h2, h3, h4, h5, h6 {
+	color: #333333;
+	}
+h2 {
+	margin-bottom: 35px;
+	margin-top: 25px;
+	}
+h4 {
+	font: 11px verdana, arial, helvetica, sans-serif;
+	font-weight: bold;
+	text-transform:uppercase;
+}
+
+
+
+/*   Letter-based navigation  */
+.navigation {
+    font-size:10px;
+    margin-left:20px;
+}
+
+td.navcell {
+    padding:3px;
+}
+
+
+
+/* Results Formatting */
+/*#results_list {
+	font-size:10px;
+	margin:100px;
+} */
+
+.colheaders {
+   font-size:18px;
+   text-align:left;
+   font-style:italic;
+   font-weight:bold;
+}
+
+
+
+
+
+
+
+/*  REPORTS   */
+#report {
+   margin:25px;
+}
+
+.reporttitle {
+   background-color:#9EAF8F;
+   border:1px solid black;
+   font-size:18px;
+   font-weight:bold;
+   padding:5px;
+}
+
+
+
+
+
+td {
+   font-size:8pt;
+   padding:0px;
+   spacing:10;
+}
+
+
+
+/* Qualifying text like 'songs appear on' */
+.qualifier {
+    color:gray;
+    font-size:10px;
+    font-style:italic;
+}
+
+
+
+
+/*   SONG REPORT   */
+.songlabel {
+	font-size:10px;
+	font-style:bold;
+	color:black;
+	background-color:gray;
+	text-align:left;
+}
+
+.songfield {
+        
+}
+
+
+
+
+
+/* Actions, like user management */
+.actiontitle {
+	font: 11px verdana, arial, helvetica, sans-serif;
+	font-weight: bold;
+	padding-bottom:5px;
+	border-bottom:1px solid black;
+	text-transform:uppercase;
+}
+
+/*  Successful / Failed database accesses */
+.actionbyline {
+	margin-top:20px;
+	padding-top:20px;
+	padding-bottom:20px;
+	text-align:center;
+	font-size:13px;
+	background-color:SkyBlue;
+	/*	font-weight:bold;  */
+	/*  border-bottom:1px solid #666;  */
+}
+
+
+/*  Successful / Failed database accesses */
+.success {
+	margin-top:20px;
+	padding-top:20px;
+	padding-bottom:20px;
+	font-size:13px;
+/*	font-weight:bold;  */
+/*	border-bottom:1px solid #666;*/
+}
+
+.name {
+	color:red;
+}
+
+
+.warning {
+	margin-top:10px;
+	padding:15px;
+	text-align:center;
+	font-size:12pt;
+	font-weight:bold;
+	background-color:#FFCC66;
+	border:1px solid #CCC;
+	border-bottom:2px solid black;
+}
+
+.configoptions {
+/*	margin-top:45px;  */
+	padding-top:5px;	
+/*	 border-top:1px solid black;   */
+}
+
+
+
+.actioncontent {
+	background-color:papayawhip;
+	padding:10px;
+	border-bottom:1px solid black;
+
+}
